@@ -102,24 +102,40 @@ void app_main(void)
 {
     printf("Button Example!\n");
 
-    button_config_t cfg = {
-        .type = BUTTON_TYPE_GPIO,
-        .gpio_button_config = {
-            .gpio_num = BUTTON_IO_NUM,
-            .active_level = 0,
-        },
-    };
-    g_btns[0] = iot_button_create(&cfg);
-    iot_button_register_cb(g_btns[0], BUTTON_PRESS_DOWN, button_press_down_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_PRESS_UP, button_press_up_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_PRESS_REPEAT, button_press_repeat_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_SINGLE_CLICK, button_single_click_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_DOUBLE_CLICK, button_double_click_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_LONG_PRESS_START, button_long_press_start_cb);
-    iot_button_register_cb(g_btns[0], BUTTON_LONG_PRESS_HOLD, button_long_press_hold_cb);
+    const uint16_t vol[6] = {380, 820, 1180, 1570, 1980, 2410};
+    button_config_t cfg = {0};
+    cfg.type = BUTTON_TYPE_ADC;
+    for (size_t i = 0; i < 6; i++) {
+        cfg.adc_button_config.adc_channel = 3,
+        cfg.adc_button_config.button_index = i;
+        if (i == 0) {
+            cfg.adc_button_config.min = (0 + vol[i]) / 2;
+        } else {
+            cfg.adc_button_config.min = (vol[i - 1] + vol[i]) / 2;
+        }
+
+        if (i == 5) {
+            cfg.adc_button_config.max = (vol[i] + 3000) / 2;
+        } else {
+            cfg.adc_button_config.max = (vol[i] + vol[i + 1]) / 2;
+        }
+
+        g_btns[i] = iot_button_create(&cfg);
+        iot_button_register_cb(g_btns[i], BUTTON_PRESS_DOWN, button_press_down_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_PRESS_UP, button_press_up_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_PRESS_REPEAT, button_press_repeat_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_SINGLE_CLICK, button_single_click_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_DOUBLE_CLICK, button_double_click_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_LONG_PRESS_START, button_long_press_start_cb);
+        iot_button_register_cb(g_btns[i], BUTTON_LONG_PRESS_HOLD, button_long_press_hold_cb);
+    }
+
+
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 
-    iot_button_delete(g_btns[0]);
+    for (size_t i = 0; i < 6; i++) {
+        iot_button_delete(g_btns[i]);
+    }
 }
