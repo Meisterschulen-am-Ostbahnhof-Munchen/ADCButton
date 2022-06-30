@@ -106,7 +106,7 @@ void app_main(void)
     button_config_t cfg = {0};
     cfg.type = BUTTON_TYPE_ADC;
     for (size_t i = 0; i < 6; i++) {
-        cfg.adc_button_config.adc_channel = 3,
+        cfg.adc_button_config.adc_channel = ADC1_CHANNEL_4,     /*!< ADC1 channel 4 is GPIO32 */
         cfg.adc_button_config.button_index = i;
         if (i == 0) {
             cfg.adc_button_config.min = (0 + vol[i]) / 2;
