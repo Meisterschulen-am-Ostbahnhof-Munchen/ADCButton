@@ -96,16 +96,16 @@ static void print_button_event(button_handle_t btn)
     }
 }
 
-
+#define V 6
 
 void app_main(void)
 {
     printf("Button Example!\n");
 
-    const uint16_t vol[6] = {380, 820, 1180, 1570, 1980, 2410};
+	const uint16_t vol[V] = {380, 820, 1180, 1570, 1980, 2410 };
     button_config_t cfg = {0};
     cfg.type = BUTTON_TYPE_ADC;
-    for (size_t i = 0; i < 6; i++) {
+	for (size_t i = 0; i < V; i++) {
         cfg.adc_button_config.adc_channel = ADC1_CHANNEL_4,     /*!< ADC1 channel 4 is GPIO32 */
         cfg.adc_button_config.button_index = i;
         if (i == 0) {
@@ -135,7 +135,7 @@ void app_main(void)
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 
-    for (size_t i = 0; i < 6; i++) {
+	for (size_t i = 0; i < V; i++) {
         iot_button_delete(g_btns[i]);
     }
 }
